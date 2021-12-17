@@ -18,19 +18,25 @@ class ProductService
 
     public function __construct()
     {
-        $this->productsRepository = new ProductRepository;
+        $this->productsRepository = new ProductRepository();
     }
 
     public function getAllProducts()
     {
         $body = array();
-        $result = $this->productsRepository->findAll();
-        foreach ($result as $product) {
-            array_push($body, ProductDTO::createProductDTO($product));
+        try {
+            $result = $this->productsRepository->findAll();
+            foreach ($result as $product) {
+                array_push($body, ProductDTO::createProductDTO($product));
+            }
+            $response['status_code_header'] = 'HTTP/1.1 200 OK';
+            $response['body'] = json_encode($body);
+            return $response;
+        } catch (Exception $e) {
+            $response['status_code_header'] = "HTTP/1.1 500 Internal Server Error";
+            $response['body'] = $e->getMessage();
+            return $response;
         }
-        $response['status_code_header'] = 'HTTP/1.1 200 OK';
-        $response['body'] = json_encode($body);
-        return $response;
     }
 
     public function createProduct($body)
@@ -56,16 +62,22 @@ class ProductService
 
     public function deleteProducts($productsSku)
     {
-        foreach ($productsSku as $sku) {
-            $result = $this->productsRepository->find($sku);
-            if (!$result) {
-                return $this->notFoundResponse();
+        try {
+            foreach ($productsSku as $sku) {
+                $result = $this->productsRepository->find($sku);
+                if (!$result) {
+                    return $this->notFoundResponse();
+                }
+                $this->productsRepository->delete($sku);
             }
-            $this->productsRepository->delete($sku);
+            $response['status_code_header'] = http_response_code(200);
+            $response['body'] = 'Product(s) deleted!';
+            return $response;
+        } catch (Exception $e) {
+            $response['status_code_header'] = "HTTP/1.1 500 Internal Server Error";
+            $response['body'] = $e->getMessage();
+            return $response;
         }
-        $response['status_code_header'] = http_response_code(200);
-        $response['body'] = 'Product(s) deleted!';
-        return $response;
     }
 
     public function notFoundResponse()

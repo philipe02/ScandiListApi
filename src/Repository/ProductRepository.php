@@ -23,7 +23,7 @@ class ProductRepository
             $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
             return $result;
         } catch (\PDOException $e) {
-            throw new ($e->getMessage());
+            throw new Exception('An error ocurred, try again later!');
         }
     }
     public function find($sku)
@@ -34,7 +34,7 @@ class ProductRepository
             $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
             return $result;
         } catch (\PDOException $e) {
-            exit($e->getMessage());
+            throw new Exception('An error ocurred, try again later!');
         }
     }
     public function insert($product)
@@ -66,13 +66,14 @@ class ProductRepository
     }
     public function delete($sku)
     {
-        $statement = "SELECT * FROM products";
+        $statement = "DELETE FROM products WHERE sku = :sku";
         try {
-            $statement = $this->db->query($statement);
+            $statement = $this->db->prepare($statement);
+            $statement->execute(array('sku' => $sku));
             $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
             return $result;
         } catch (\PDOException $e) {
-            exit($e->getMessage());
+            throw new Exception('An error ocurred, try again later!');
         }
     }
 }
