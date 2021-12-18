@@ -2,6 +2,8 @@
 
 namespace src\System;
 
+use Src\Exceptions\GenericException;
+
 class DbConnector
 {
 
@@ -22,7 +24,9 @@ class DbConnector
                 $pass
             );
         } catch (\PDOException $e) {
-            exit($e->getMessage());
+            $e = new GenericException('An error ocurred, try again later!', $e->getMessage());
+            header("HTTP/1.1 500 Internal Server Error");
+            exit($e->getErrorMessage());
         }
     }
 

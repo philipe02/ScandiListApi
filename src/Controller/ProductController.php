@@ -34,6 +34,9 @@ class ProductController
             case 'DELETE':
                 $response = $this->productService->deleteProducts($this->body);
                 break;
+            case 'OPTIONS':
+                $response['status_code_header'] = 'HTTP/1.1 200 OK';
+                break;
             default:
                 $response = $this->productService->notFoundResponse();
                 break;

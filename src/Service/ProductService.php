@@ -5,11 +5,8 @@ namespace Src\Service;
 use Exception;
 
 use Src\DTO\ProductDTO;
-use Src\Exceptions\DuplicateEntryException;
-use Src\Exceptions\GenericException;
-use Src\Model\Book;
-use Src\Model\Dvd;
-use Src\Model\Furniture;
+use \Src\Exceptions\GenericException;
+use Src\Model\Product;
 use Src\Repository\ProductRepository;
 
 class ProductService
@@ -41,21 +38,19 @@ class ProductService
 
     public function createProduct($body)
     {
-        $input = (array) json_decode($body, TRUE);
-        $product = ProductDTO::createProductDTO($input);
         try {
+            $input = (array) json_decode($body, TRUE);
+            $product = ProductDTO::createProductDTO($input);
+            print_r($product);
             $this->productsRepository->insert($product);
             $response['status_code_header'] = 'HTTP/1.1 201 Created';
             $response['body'] = 'Product created!';
             return $response;
-        } catch (Exception $e) {
-            if (str_contains($e->getMessage(), 'exists')) {
+        } catch (GenericException $e) {
+            if (str_contains($e::class, 'Exists'))
                 $response['status_code_header'] = "HTTP/1.1 400 Bad Request";
-                $response['body'] = $e->getMessage();
-                return $response;
-            }
             $response['status_code_header'] = "HTTP/1.1 500 Internal Server Error";
-            $response['body'] = $e->getMessage();
+            $response['body'] = $e->getErrorMessage();
             return $response;
         }
     }
@@ -63,19 +58,24 @@ class ProductService
     public function deleteProducts($productsSku)
     {
         try {
-            foreach ($productsSku as $sku) {
+            $skuList = (array) json_decode($productsSku, TRUE);
+            foreach ($skuList['sku'] as $sku) {
                 $result = $this->productsRepository->find($sku);
+                print_r($result);
                 if (!$result) {
                     return $this->notFoundResponse();
                 }
-                $this->productsRepository->delete($sku);
+
+                $this->productsRepository->delete($result['sku']);
             }
-            $response['status_code_header'] = http_response_code(200);
+            $response['status_code_header'] = 'HTTP/1.1 200 OK';
             $response['body'] = 'Product(s) deleted!';
             return $response;
-        } catch (Exception $e) {
+        } catch (GenericException $e) {
+            if (str_contains($e::class, 'NotFound'))
+                $response['status_code_header'] = "HTTP/1.1 404 Bad Request";
             $response['status_code_header'] = "HTTP/1.1 500 Internal Server Error";
-            $response['body'] = $e->getMessage();
+            $response['body'] = $e->getErrorMessage();
             return $response;
         }
     }

@@ -3,8 +3,9 @@
 namespace Src\Repository;
 
 use Exception;
-use Src\Exceptions\DuplicateEntryException;
-use Src\Exceptions\GenericException;
+use \Src\Exceptions\GenericException;
+use \Src\Exceptions\ProductAlreadyExistsException;
+use \Src\Exceptions\ProductNotFoundException;
 use Src\System\DbConnector;
 
 class ProductRepository
@@ -23,18 +24,21 @@ class ProductRepository
             $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
             return $result;
         } catch (\PDOException $e) {
-            throw new Exception('An error ocurred, try again later!');
+            throw new GenericException('An error ocurred, try again later!', $e->getMessage());
         }
     }
     public function find($sku)
     {
-        $statement = "SELECT * FROM products WHERE id = ?";
+        $statement = "SELECT * FROM products WHERE sku = ?";
         try {
-            $statement = $this->db->query($statement);
-            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            $statement = $this->db->prepare($statement);
+            $statement->execute(array($sku));
+            $result = $statement->fetch(\PDO::FETCH_UNIQUE);
+            if (!$result)
+                throw new ProductNotFoundException("Produduct {$sku} not found");
             return $result;
         } catch (\PDOException $e) {
-            throw new Exception('An error ocurred, try again later!');
+            throw new GenericException('An error ocurred, try again later!', $e->getMessage());
         }
     }
     public function insert($product)
@@ -60,8 +64,8 @@ class ProductRepository
             return $result;
         } catch (\PDOException $e) {
             if (str_contains($e->getMessage(), 'Duplicate'))
-                throw new Exception('Product SKU already exists!');
-            throw new Exception('An error ocurred, try again later!');
+                throw new ProductAlreadyExistsException($e->getMessage());
+            throw new GenericException('An error ocurred!', $e->getMessage());
         }
     }
     public function delete($sku)
@@ -73,7 +77,7 @@ class ProductRepository
             $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
             return $result;
         } catch (\PDOException $e) {
-            throw new Exception('An error ocurred, try again later!');
+            throw new GenericException('An error ocurred, try again later!', $e->getMessage());
         }
     }
 }
