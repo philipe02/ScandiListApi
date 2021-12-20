@@ -4,15 +4,15 @@ namespace Src\Exceptions;
 
 class ProductNotFoundException extends GenericException
 {
-    public string $stackTrace;
+    public string $error;
 
-    public function __construct(string $stackTrace)
+    public function __construct(string $error)
     {
         $this->message = 'Product not found!';
-        $this->stackTrace = $stackTrace;
+        $this->error = $error;
     }
     public function getErrorMessage()
     {
-        return json_encode(array('message' => $this->message, 'stackTrace' => $this->stackTrace));
+        return json_encode(array('message' => $this->message, 'error' => $this->error));
     }
 }

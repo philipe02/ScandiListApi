@@ -2,7 +2,7 @@
 
 namespace Src\Model;
 
-class Product
+abstract class Product
 {
 
     protected String $sku;

@@ -6,15 +6,15 @@ use Exception;
 
 class GenericException extends Exception
 {
-    public string $stackTrace;
+    public string $error;
 
-    public function __construct(string $message, string $stackTrace)
+    public function __construct(string $message, string $error)
     {
         $this->message = $message;
-        $this->stackTrace = $stackTrace;
+        $this->error = $error;
     }
     public function getErrorMessage()
     {
-        return json_encode(array('message' => $this->message, 'stackTrace' => $this->stackTrace));
+        return json_encode(array('message' => $this->message, 'error' => $this->error));
     }
 }
