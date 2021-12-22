@@ -5,8 +5,10 @@ use Dotenv\Dotenv;
 
 use Src\System\DbConnector;
 
-$dotenv = new DotEnv(__DIR__);
-$dotenv->load();
+if (file_exists(__DIR__ . '/.env')) {
+    $dotenv = new DotEnv(__DIR__);
+    $dotenv->load();
+}
 
 // test code, should output:
 // api://default
