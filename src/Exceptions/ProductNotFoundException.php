@@ -4,7 +4,6 @@ namespace Src\Exceptions;
 
 class ProductNotFoundException extends GenericException
 {
-    public string $error;
 
     public function __construct(string $error)
     {

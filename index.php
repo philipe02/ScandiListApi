@@ -32,7 +32,7 @@ if (isset($uri[2])) {
 $requestMethod = $_SERVER["REQUEST_METHOD"];
 $body = file_get_contents('php://input');
 
-error_log($_SERVER['REQUEST_URI'] . ' ' . $requestMethod);
+error_log(LOG_DEBUG, $_SERVER['REQUEST_URI'] . ' ' . $requestMethod);
 
 $controller = new ProductController($requestMethod, $productSku, $body);
 $controller->processRequest();

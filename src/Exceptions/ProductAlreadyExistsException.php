@@ -4,7 +4,6 @@ namespace Src\Exceptions;
 
 class ProductAlreadyExistsException extends GenericException
 {
-    public string $error;
 
     public function __construct(string $error)
     {
