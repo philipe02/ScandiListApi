@@ -5,7 +5,6 @@ namespace Src\DTO;
 use Src\Model\Book;
 use Src\Model\Dvd;
 use Src\Model\Furniture;
-use Src\Model\Product;
 
 class ProductDTO
 {

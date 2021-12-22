@@ -2,7 +2,6 @@
 
 namespace Src\Repository;
 
-use Exception;
 use \Src\Exceptions\GenericException;
 use \Src\Exceptions\ProductAlreadyExistsException;
 use \Src\Exceptions\ProductNotFoundException;

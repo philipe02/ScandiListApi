@@ -6,7 +6,6 @@ use Exception;
 
 use Src\DTO\ProductDTO;
 use \Src\Exceptions\GenericException;
-use Src\Model\Product;
 use Src\Repository\ProductRepository;
 
 class ProductService
